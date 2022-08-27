@@ -36,7 +36,7 @@ class _HTMLDiceStringifier(SimpleStringifier):
         the_rolls = []
         for val in node.values:
             inside = self._stringify(val)
-            if val.number == 1 or val.number == node.size:
+            if val.number in [1, node.size]:
                 inside = f"<b>{inside}</b>"
             the_rolls.append(inside)
         return ", ".join(the_rolls)

@@ -50,10 +50,7 @@ async def github(match: re.Match[str], *, client: AsyncClient) -> str:
     elif m.branch:
         path = m.path or ""
         url += f"/tree/{m.branch}/{path}"
-        if len(m.branch) == 40:  # Full commit hash
-            text += f"@{m.branch[:7]}"
-        else:
-            text += f"@{m.branch}"
+        text += f"@{m.branch[:7]}" if len(m.branch) == 40 else f"@{m.branch}"
         if path:
             text += f":/{path}"
     elif m.issue:

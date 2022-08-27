@@ -143,9 +143,7 @@ class RedisStorage(Storage):
 
     async def get_sticker_cache(self) -> _StickerCache:
         cache = await self._pool.get(self._key("stickers"))
-        if cache is None:
-            return {}
-        return json.loads(cache)
+        return {} if cache is None else json.loads(cache)
 
     async def wait_sticker_cache(self) -> _StickerCache:
         pubsub: PubSub

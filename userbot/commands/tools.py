@@ -34,14 +34,8 @@ async def calendar(_: Client, message: Message, args: str) -> str:
     args_list = args.split()
     # It's more reliable to get current date/time from the message
     now = message.edit_date or message.date or datetime.now()
-    if len(args_list) >= 1:
-        month = int(args_list[0])
-    else:
-        month = now.month
-    if len(args_list) == 2:
-        year = int(args_list[1])
-    else:
-        year = now.year
+    month = int(args_list[0]) if args_list else now.month
+    year = int(args_list[1]) if len(args_list) == 2 else now.year
     return f"<code>{TextCalendar().formatmonth(year, month)}</code>"
 
 

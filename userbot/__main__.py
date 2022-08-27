@@ -48,7 +48,7 @@ def main() -> None:
     if not config.data_location.is_dir():
         raise NotADirectoryError(f"{config.data_location} must be a directory (`data_location`)")
     os.chdir(config.data_location)
-    env_suffix = "-dev" if not is_prod() else ""
+    env_suffix = "" if is_prod() else "-dev"
     client = Client(
         name=config.session,
         api_id=config.api_id,

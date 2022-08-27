@@ -80,7 +80,7 @@ class _CommandHandler:
         last_own_frame = None
         last_frame = None
         own_package_name = Path(__file__).parent
-        for i, frame in enumerate(extract_tb(e.__traceback__)):
+        for frame in extract_tb(e.__traceback__):
             frame: FrameSummary
             if frame.filename is not None and Path(frame.filename).parent == own_package_name:
                 last_own_frame = frame
@@ -103,8 +103,7 @@ class _CommandHandler:
                     snip=SNIP,
                 )
         tb += type(e).__qualname__
-        exc_value = str(e)
-        if exc_value:
+        if exc_value := str(e):
             tb += f": {exc_value}"
         tb = f"<pre><code class='language-python'>{html.escape(tb)}</code></pre>"
         return (
@@ -324,11 +323,17 @@ class CommandsModule:
     async def _auto_help_handler(self, _: Client, __: Message, args: str) -> str:
         logging.info(f"Sending help for {args}")
         if args:
-            for h in self._handlers:
-                if isinstance(h.command, str) and h.command == args or args in h.command:
-                    return f"<b>Help for {args}:</b>\n{html.escape(_format_handler_usage(h))}"
-            else:
-                return f"<b>No help found for {args}</b>"
+            return next(
+                (
+                    f"<b>Help for {args}:</b>\n{html.escape(_format_handler_usage(h))}"
+                    for h in self._handlers
+                    if isinstance(h.command, str)
+                    and h.command == args
+                    or args in h.command
+                ),
+                f"<b>No help found for {args}</b>",
+            )
+
         text = "<b>List of userbot commands available:</b>\n\n"
         prev_cat = ""
         for handler in sorted(self._handlers, key=_command_handler_sort_key):

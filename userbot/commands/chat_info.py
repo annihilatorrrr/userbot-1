@@ -39,8 +39,7 @@ async def set_random_chat_photo(chat_id: int, client: Client) -> Message:
             return message
         finally:
             retries -= 1
-    else:
-        raise RuntimeError("Retries exceeded")
+    raise RuntimeError("Retries exceeded")
 
 
 async def set_random_chat_title(chat_id: int, client: Client) -> Message:
@@ -62,19 +61,18 @@ async def set_random_chat_title(chat_id: int, client: Client) -> Message:
             return message
         finally:
             retries -= 1
-    else:
-        raise RuntimeError("Retries exceeded")
+    raise RuntimeError("Retries exceeded")
 
 
 @commands.add("rndinfo", usage="['photo'|'title']")
 async def random_chat_info(client: Client, message: Message, args: str) -> str:
     """Sets random chat photo and/or title"""
     text = ""
-    if args == "photo" or args == "":
+    if args in {"photo", ""}:
         msg = await set_random_chat_photo(message.chat.id, client)
         text += f"🖼 <b>New chat avatar was set!</b> <a href='{msg.link}'>Source</a>\n\n"
         await sleep(0.1)
-    if args == "title" or args == "":
+    if args in {"title", ""}:
         msg = await set_random_chat_title(message.chat.id, client)
         text += f"📝 <b>New chat title was set!</b> <a href='{msg.link}'>Source</a>"
         await sleep(0.1)

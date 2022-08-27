@@ -54,12 +54,8 @@ async def _downloader(client: Client, message: Message, filename: str, data_dir:
 
 async def download(client: Client, message: Message, args: str, *, data_dir: Path) -> str:
     """Downloads a file or files"""
-    msg = message.reply_to_message if message.reply_to_message else message
-    if msg.media_group_id:
-        all_messages = await msg.get_media_group()
-    else:
-        all_messages = [msg]
-
+    msg = message.reply_to_message or message
+    all_messages = await msg.get_media_group() if msg.media_group_id else [msg]
     t = ""
     for m in all_messages:
         try:

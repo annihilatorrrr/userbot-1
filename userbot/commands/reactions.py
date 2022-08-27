@@ -47,12 +47,15 @@ async def get_reactions(client: Client, message: Message, __: str) -> str:
     for reaction, peers in reactions.items():
         t += f"<code>{reaction}</code>: {len(peers)}\n"
         for peer_id in peers:
-            for user in messages.users:
-                if user.id == peer_id:
-                    peer_name = user.first_name or "Deleted Account"
-                    break
-            else:
-                peer_name = "Unknown user"
+            peer_name = next(
+                (
+                    user.first_name or "Deleted Account"
+                    for user in messages.users
+                    if user.id == peer_id
+                ),
+                "Unknown user",
+            )
+
             t += f"- <a href='tg://user?id={peer_id}'>{peer_name}</a> (#<code>{peer_id}</code>)\n"
     return t or "<i>No reactions here</i>"
 

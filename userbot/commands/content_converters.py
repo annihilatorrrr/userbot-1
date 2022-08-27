@@ -17,7 +17,7 @@ commands = CommandsModule("Content converters")
 @commands.add("togif", usage="[reply]", waiting_message="<i>Converting...</i>")
 async def video_to_gif(client: Client, message: Message, __: str) -> str | None:
     """Converts a video to a mpeg4 gif"""
-    msg = message.reply_to_message if message.reply_to_message else message
+    msg = message.reply_to_message or message
     video = msg.video
     if not video:
         return "⚠ No video found"
@@ -57,7 +57,7 @@ async def video_to_gif(client: Client, message: Message, __: str) -> str | None:
 )
 async def photo_to_sticker(client: Client, message: Message, args: str) -> None:
     """Converts a photo to a sticker-ready png or webp"""
-    msg = message.reply_to_message if message.reply_to_message else message
+    msg = message.reply_to_message or message
     output_io = await client.download_media(msg, in_memory=True)
     output_io.seek(0)
     im: Image.Image = Image.open(output_io)
@@ -69,12 +69,6 @@ async def photo_to_sticker(client: Client, message: Message, args: str) -> None:
     im.save(output_io, args or "png")
     output_io.seek(0)
     output_io.name = f"sticker.{fmt}"
-    match fmt:
-        case "png":
-            await msg.reply_document(output_io, file_name="sticker.png")
-        case "webp":
-            await msg.reply_sticker(output_io)
-        case _:
-            raise AssertionError("Wrong format, this should never happen")
+    msg = message.reply_to_message if message.reply_to_message else message
     if message.reply_to_message:
         await message.delete()
